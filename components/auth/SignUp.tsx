@@ -10,6 +10,7 @@ import { GrApple } from "react-icons/gr";
 import useUserState from "../../store/auth/user";
 import Spinner from "../utils/spinner";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 interface User {
 	username: string;
@@ -29,6 +30,8 @@ function SignUp() {
 	const stateUser = useUserState((state) => state.user);
 	const stateSetUser = useUserState((state) => state.setUser);
 	const [customErr, setCustomErr] = useState("");
+
+	const router = useRouter();
 
 	function handleRegisterButton() {
 		setCustomErr("");
@@ -67,12 +70,13 @@ function SignUp() {
 			};
 			await setDoc(doc(db, "users", uid), newUser, { merge: true });
 			stateSetUser(newUser);
+			router.push("/web");
 		} catch (e) {
 			console.error("Error adding document: ", e, e.message);
 		}
 	}
 	return (
-		<div className="max-w-[500px] m-auto">
+		<div className="max-w-[500px] mx-auto">
 			<h3 className="text-4xl font-bold my-10"> Sign Up</h3>
 			<div className="my-2">
 				<div

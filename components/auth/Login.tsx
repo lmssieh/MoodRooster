@@ -7,6 +7,7 @@ import { GrApple } from "react-icons/gr";
 import useUserState from "../../store/auth/user";
 import Spinner from "../utils/spinner";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 interface User {
 	username: string;
@@ -23,6 +24,8 @@ function SignUp() {
 	const stateUser = useUserState((state) => state.user);
 	const stateSetUser = useUserState((state) => state.setUser);
 	const [customErr, setCustomErr] = useState("");
+
+	const router = useRouter();
 
 	function handleLoginButton() {
 		setCustomErr("");
@@ -50,18 +53,15 @@ function SignUp() {
 			console.log(uid, email);
 			if (!uid || !email) return;
 			try {
-				// const newUser: User = {
-				// 	username: null,
-				// 	email: email.trim(),
-				// 	moodsDates: {},
-				// 	isPremium: false,
-				// };
-
 				const re = doc(db, "users", uid);
 				const docSnap = await getDoc(re);
-				const d = docSnap.data();
-				console.log(d);
-				// stateSetUser(newUser);
+				const data = docSnap.data();
+				if (data) {
+					const { email, username, isPremium, moodsDates } = data;
+					stateSetUser({ email, username, isPremium, moodsDates });
+
+					router.push("/web");
+				}
 			} catch (e) {
 				console.error("Error adding document: ", e, e.message);
 			}
